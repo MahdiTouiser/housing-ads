@@ -6,9 +6,10 @@ const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
 
 server.use(middlewares);
+server.db = router.db;
 server.use(auth);
 server.use(router);
 
 server.listen(3000, () => {
-  console.log('JSON Server is running');
+  console.log('JSON Server with auth is running on port 3000');
 });

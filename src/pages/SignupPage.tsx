@@ -1,10 +1,16 @@
 import { useState } from 'react';
 
 import {
-  Eye,
-  EyeOff,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import {
+    Link,
+    useNavigate,
+} from 'react-router-dom';
+
+import useApi from '../hooks/useApi';
 
 const SignupPage = () => {
     const [email, setEmail] = useState("");
@@ -13,14 +19,35 @@ const SignupPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const navigate = useNavigate();
+
+
+    const { callApi, loading } = useApi();
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (password !== confirmPassword) {
             toast.error("Passwords do not match!");
             return;
         }
-        console.log("Signing up with", email, password);
-        // Call your signup API here
+
+        const newUser = { email, password };
+
+        try {
+            const response = await callApi('/register', {
+                method: 'POST',
+                data: newUser
+            });
+
+            if (response?.accessToken) {
+                localStorage.setItem('token', response.accessToken);
+                toast.success("Signup successful!");
+                navigate('/login');
+            }
+        } catch (error) {
+            console.error("Signup error:", error);
+        }
     };
 
     return (
@@ -78,13 +105,17 @@ const SignupPage = () => {
                         </button>
                     </div>
 
-                    <button type="submit" className="w-full bg-green-500 text-white p-3 rounded-md hover:bg-green-600">
-                        Sign Up
+                    <button
+                        type="submit"
+                        className="w-full bg-green-500 text-white p-3 rounded-md hover:bg-green-600"
+                        disabled={loading}
+                    >
+                        {loading ? 'Signing up...' : 'Sign Up'}
                     </button>
                 </form>
                 <div className="mt-4 text-center">
                     <span>Already have an account? </span>
-                    <a href="/login" className="text-blue-500 hover:text-blue-700">Login</a>
+                    <Link to="/login" className="text-blue-500 hover:text-blue-700">Login</Link>
                 </div>
             </div>
         </div>
