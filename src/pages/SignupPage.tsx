@@ -10,6 +10,7 @@ import {
     useNavigate,
 } from 'react-router-dom';
 
+import { useAuth } from '../contexts/AuthContext';
 import useApi from '../hooks/useApi';
 
 const SignupPage = () => {
@@ -20,9 +21,8 @@ const SignupPage = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const navigate = useNavigate();
-
-
     const { callApi, loading } = useApi();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,12 +41,12 @@ const SignupPage = () => {
             });
 
             if (response?.accessToken) {
-                localStorage.setItem('token', response.accessToken);
-                toast.success("Signup successful!");
-                navigate('/login');
+                login(response.accessToken);
+                navigate('/home');
             }
         } catch (error) {
             console.error("Signup error:", error);
+            toast.error("Signup failed.");
         }
     };
 

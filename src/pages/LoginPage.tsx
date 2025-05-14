@@ -4,16 +4,39 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom';
+
+import { useAuth } from '../contexts/AuthContext';
+import useApi from '../hooks/useApi';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { callApi, loading } = useApi();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Logging in with", email, password);
-    // Call your login API here
+
+    try {
+      const response = await callApi('/login', {
+        method: 'POST',
+        data: { email, password },
+      });
+
+      if (response?.accessToken) {
+        login(response.accessToken);
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Login failed', error);
+    }
   };
 
   return (
@@ -36,7 +59,7 @@ const LoginPage = () => {
           <div className="mb-4 relative">
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -52,13 +75,17 @@ const LoginPage = () => {
             </button>
           </div>
 
-          <button type="submit" className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600">
-            Login
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <div className="mt-4 text-center">
-          <span>Don't have an account? </span>
-          <a href="/signup" className="text-blue-500 hover:text-blue-700">Sign up</a>
+          <span>Do not have an account? </span>
+          <Link to="/signup" className="text-blue-500 hover:text-blue-700">Sign up</Link>
         </div>
       </div>
     </div>
