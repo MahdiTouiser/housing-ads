@@ -1,66 +1,70 @@
 import {
   useCallback,
-  useMemo,
   useState,
 } from 'react';
 
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const useApi = <T,>(id: string) => {
-  const [responses, setResponses] = useState<{ [key: string]: T | null }>({});
-  const [errors, setErrors] = useState<{ [key: string]: Error | null }>({});
-  const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
+type ApiConfig = {
+  method?: string;
+  headers?: Record<string, string>;
+  data?: unknown;
+  params?: Record<string, unknown>;
+};
 
-  const callApi = useCallback(async (endpoint: string, config: any = {}) => {
-    setLoading(prev => ({ ...prev, [id]: true }));
+const useApi = <T,>() => {
+  const [response, setResponse] = useState<T | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const callApi = useCallback(async (endpoint: string, config: ApiConfig = {}) => {
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+
     try {
       const baseUrl = import.meta.env.VITE_BASE_API_URL;
-      const token = localStorage.getItem('token');
-      const customHeaders = {
-        'Access-Control-Allow-Origin': '*',
-        ...config.headers,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
+      if (!baseUrl) throw new Error('VITE_BASE_API_URL is not defined');
 
-      if (config.data instanceof FormData) {
-        delete customHeaders['Content-Type'];
-      }
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...config.headers,
+      };
 
       const result = await axios({
         ...config,
         url: `${baseUrl}${endpoint}`,
-        headers: customHeaders
+        headers,
       });
 
-      setResponses(prev => ({ ...prev, [id]: result?.data }));
+      setResponse(result.data);
 
-      if (config.method && config.method.toUpperCase() !== 'GET') {
-        toast.success(result?.data.message);
+      if ((config.method || '').toUpperCase() !== 'GET') {
+        toast.success('Success');
       }
 
-      return result?.data;
-
+      return result.data;
     } catch (err) {
-      setErrors(prev => ({ ...prev, [id]: err as Error }));
+      let errorMessage = 'An unexpected error occurred';
       if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data?.message || 'An error occurred';
-        toast.error(errorMessage);
-      } else {
-        toast.error('An unexpected error occurred');
+        errorMessage = err.response?.data?.message || errorMessage;
       }
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
-      setLoading(prev => ({ ...prev, [id]: false }));
+      setLoading(false);
     }
-  }, [id]);
+  }, []);
 
-
-  return useMemo(() => ({
-    response: responses[id] || null,
-    error: errors[id] || null,
-    loading: loading[id] || false,
-    callApi
-  }), [responses, id, errors, loading, callApi]);
+  return {
+    response,
+    error,
+    loading,
+    callApi,
+  };
 };
 
 export default useApi;
