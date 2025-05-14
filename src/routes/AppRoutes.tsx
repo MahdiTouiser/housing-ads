@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
     Navigate,
     Route,
@@ -7,16 +9,26 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import Home from '../pages/Home';
 import LoginPage from '../pages/LoginPage';
+import PostAd from '../pages/PostAd';
 import SignupPage from '../pages/SignupPage';
 
-const AppRoutes = () => {
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     const { token } = useAuth();
+    return token ? children : <Navigate to="/login" replace />;
+};
 
+const PublicRoute = ({ children }: { children: JSX.Element }) => {
+    const { token } = useAuth();
+    return token ? <Navigate to="/" replace /> : children;
+};
+
+const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={token ? <Home /> : <Navigate to="/login" replace />} />
-            <Route path="/login" element={token ? <Navigate to="/" replace /> : <LoginPage />} />
-            <Route path="/signup" element={token ? <Navigate to="/" replace /> : <SignupPage />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/post-ad" element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
+            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
