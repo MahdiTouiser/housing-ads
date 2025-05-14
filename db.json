@@ -31,5 +31,14 @@
       "id": 6
     }
   ],
-  "ads": []
+  "ads": [
+    {
+      "phone": "09124130890",
+      "address": "Tehran , mantaghe 2 ",
+      "description": "This is the map",
+      "lat": 35.688393436844706,
+      "lng": 51.392710371647816,
+      "id": 1
+    }
+  ]
 }
