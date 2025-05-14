@@ -3,7 +3,6 @@ import './App.css';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter } from 'react-router-dom';
 
-import Layout from './components/Layout';
 import { AuthProvider } from './contexts/AuthContext';
 import AppRoutes from './routes/AppRoutes';
 
@@ -20,9 +19,7 @@ function App() {
             },
           }}
         />
-        <Layout>
-          <AppRoutes />
-        </Layout>
+        <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
   );
