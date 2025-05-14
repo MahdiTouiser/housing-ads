@@ -8,8 +8,6 @@ const Header = () => {
                 <nav>
                     <ul className="flex space-x-6">
                         <li><Link to="/" className="hover:text-gray-400">Home</Link></li>
-                        <li><Link to="/login" className="hover:text-gray-400">Login</Link></li>
-                        <li><Link to="/register" className="hover:text-gray-400">Register</Link></li>
                         <li><Link to="/post-ad" className="hover:text-gray-400">Post Ad</Link></li>
                     </ul>
                 </nav>
