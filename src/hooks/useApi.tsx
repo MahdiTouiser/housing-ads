@@ -42,6 +42,7 @@ const useApi = <T,>() => {
 
       setResponse(result.data);
 
+
       return result.data;
     } catch (err) {
       let errorMessage = 'An unexpected error occurred';

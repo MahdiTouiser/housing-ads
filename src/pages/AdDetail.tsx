@@ -1,28 +1,36 @@
-import 'leaflet/dist/leaflet.css';
-
 import {
-  useEffect,
-  useState,
+    useEffect,
+    useState,
 } from 'react';
 
 import toast from 'react-hot-toast';
 import {
-  MapContainer,
-  Marker,
-  TileLayer,
+    MapContainer,
+    Marker,
+    TileLayer,
 } from 'react-leaflet';
 import {
-  useNavigate,
-  useParams,
+    useNavigate,
+    useParams,
 } from 'react-router-dom';
 
 import useApi from '../hooks/useApi';
+import EditAdModal from './EditAdModal';
+
+interface Ad {
+    id: number;
+    address: string;
+    description: string;
+    phone: string;
+    lat: number;
+    lng: number;
+}
 
 const AdDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { callApi } = useApi();
-    const [ad, setAd] = useState<any>(null);
+    const [ad, setAd] = useState<Ad | null>(null);
     const [showEditModal, setShowEditModal] = useState(false);
 
     useEffect(() => {
@@ -41,12 +49,24 @@ const AdDetail = () => {
         navigate('/');
     };
 
+    const handleSave = async (updatedAd: { address: string; description: string; phone: string; lat: number; lng: number }) => {
+        const updatedData = await callApi(`/ads/${id}`, {
+            method: 'PUT',
+            data: JSON.stringify(updatedAd),
+        });
+
+        if (updatedData) {
+            setAd(updatedData);
+            toast.success('Ad updated successfully');
+        }
+    };
+
     if (!ad) return <div>Loading...</div>;
 
     return (
         <div className="p-4 max-w-2xl mx-auto">
             <h2 className="text-xl font-bold mb-2">{ad.address}</h2>
-            <MapContainer center={[ad.lat, ad.lng]} zoom={13} style={{ height: '300px' }}>
+            <MapContainer center={[ad.lat, ad.lng]} zoom={16} style={{ height: '300px', zIndex: 0 }} className="mb-4">
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <Marker position={[ad.lat, ad.lng]} />
             </MapContainer>
@@ -57,9 +77,8 @@ const AdDetail = () => {
                 <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
             </div>
 
-            {/* {showEditModal && <EditAdModal ad={ad} onClose={() => setShowEditModal(false)} />} */}
+            <EditAdModal ad={ad} onClose={() => setShowEditModal(false)} isOpen={showEditModal} onSave={handleSave} />
         </div>
     );
 };
-
 export default AdDetail;
