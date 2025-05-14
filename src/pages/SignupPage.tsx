@@ -4,6 +4,7 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const SignupPage = () => {
     const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ const SignupPage = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            alert("Passwords do not match!");
+            toast.error("Passwords do not match!");
             return;
         }
         console.log("Signing up with", email, password);
