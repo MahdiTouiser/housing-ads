@@ -30,14 +30,5 @@ A full-featured real estate listing web application built with **React**, **Type
 | Frontend   | React, TypeScript, Vite, React Router           |
 | Map        | Leaflet, React-Leaflet                          |
 | Backend    | json-server, json-server-auth                   |
-| Styling    | Tailwind CSS or Styled-components (your choice) |
+| Styling    | Tailwind CSS  |
 | State Mgmt | Context API + Custom Hooks                      |
-
-## 🚀 Getting Started
-
-### 1. Clone the Repo
-
-```bash
-git clone https://github.com/your-username/housing-ads.git
-cd housing-ads
-```
