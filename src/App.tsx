@@ -3,26 +3,26 @@ import './App.css';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter } from 'react-router-dom';
 
-import Layout from './components/Layout';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import AppRoutes from './routes/AppRoutes';
 
-function App() {
+const App: React.FC = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Toaster
-          position="top-left"
-          toastOptions={{
-            style: {
-              background: '#333',
-              color: '#fff',
-            },
-          }}
-        />
-        <Layout>
+        <ThemeProvider>
+          <Toaster
+            position="top-left"
+            toastOptions={{
+              style: {
+                background: '#333',
+                color: '#fff',
+              },
+            }}
+          />
           <AppRoutes />
-        </Layout>
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   );

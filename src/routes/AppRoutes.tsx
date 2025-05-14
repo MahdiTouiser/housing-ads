@@ -6,6 +6,7 @@ import {
     Routes,
 } from 'react-router-dom';
 
+import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import AdDetail from '../pages/AdDetail';
 import Home from '../pages/Home';
@@ -26,9 +27,30 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/post-ad" element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
-            <Route path="/ads/:id" element={<ProtectedRoute><AdDetail /></ProtectedRoute>} />
+            <Route
+                path="/"
+                element={
+                    <ProtectedRoute>
+                        <Layout><Home /></Layout>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/post-ad"
+                element={
+                    <ProtectedRoute>
+                        <Layout><PostAd /></Layout>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/ads/:id"
+                element={
+                    <ProtectedRoute>
+                        <Layout><AdDetail /></Layout>
+                    </ProtectedRoute>
+                }
+            />
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
