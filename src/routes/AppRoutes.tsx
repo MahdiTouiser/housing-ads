@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
+import AdDetail from '../pages/AdDetail';
 import Home from '../pages/Home';
 import LoginPage from '../pages/LoginPage';
 import PostAd from '../pages/PostAd';
@@ -27,6 +28,7 @@ const AppRoutes = () => {
         <Routes>
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/post-ad" element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
+            <Route path="/ads/:id" element={<ProtectedRoute><AdDetail /></ProtectedRoute>} />
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />

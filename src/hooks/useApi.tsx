@@ -42,10 +42,6 @@ const useApi = <T,>() => {
 
       setResponse(result.data);
 
-      if ((config.method || '').toUpperCase() !== 'GET') {
-        toast.success('Success');
-      }
-
       return result.data;
     } catch (err) {
       let errorMessage = 'An unexpected error occurred';
